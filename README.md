@@ -24,9 +24,9 @@ This software requires:
  - CMake >= 3.2
  - Qt >= 5.6
  - ImageUtilities (https://github.com/VLOGroup/imageutilities) with the `iugui`, `iuio` and `iumath` modules
- - libcaer >=2.0 (https://github.com/inilabs/libcaer)
+ - libcaer >=2.0 (https://github.com/inilabs/libcaer), libcaer >= 3.0 for DVS with revision 16 or newer
  - cnpy (https://github.com/rogersce/cnpy)
- - DVS128 camera (can also load events from files)
+ - DVS128 or DAVIS240 camera (can also load events from files)
 
 To compile, first build and install ImageUtilities, then:
  ~~~
@@ -45,7 +45,7 @@ cmake ../src
 make -j6
  ~~~
 
- Per default, the application will compile to support the iniLabs DVS128.
+ Per default, the application will compile to support the iniLabs DVS128. If you want to attach a DAVIS240 instead, set the CMake option WITH_DAVIS.
 
 ## Usage
 Launch `live_tracking_gui <camera_calibration_file.txt>` to get to the main application which should look like this:
