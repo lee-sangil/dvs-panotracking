@@ -102,6 +102,9 @@ void TrackingWorker::run()
     tracking_quality_ = 1;
     image_id_ = 0;
     //int event_id = 0;
+
+	std::cout << "roll" << "\t" << "pitch" << "\t" << "yaw" << std::endl;
+
     while(running_) {
         mutex_events_.lock();
         bool image_available = events_.size()>events_per_image_;
@@ -115,7 +118,7 @@ void TrackingWorker::run()
             }
             mutex_events_.unlock();
             track(temp_events);
-			std::cout << "Roll-Pitch-Yaw [rad]: [" << pose_[0] << ", " << pose_[1] << ", " << pose_[2] << "]" << std::endl;
+			std::cout << pose_[0] << "\t" << pose_[1] << "\t" << pose_[2] << std::endl;
         } else
             msleep(1);
     }
