@@ -34,7 +34,7 @@
 
 TrackingMainWindow::TrackingMainWindow(char *camera_configuration_file, int device_number) : QMainWindow(NULL)
 {
-#ifdef DAVIS
+#ifdef DAVIS240
     int width = 240;
     int height = 180;
 #else
@@ -43,7 +43,12 @@ TrackingMainWindow::TrackingMainWindow(char *camera_configuration_file, int devi
 #endif
     parameters_.readFromfile(camera_configuration_file);
     tracking_worker_ = new TrackingWorker(parameters_,width,height, device_number,1.5f);
+
+#ifdef DAVIS240
+    camera_worker_ = new DAVISCameraWorker(tracking_worker_);
+#else
     camera_worker_ = new DVSCameraWorker(tracking_worker_);
+#endif
 
     std::cout << parameters_.K_cam << std::endl;
 
@@ -169,7 +174,11 @@ TrackingMainWindow::TrackingMainWindow(char *camera_configuration_file, int devi
     addToolBar(Qt::LeftToolBarArea,toolbar);
 
     // Window title
+#ifdef DAVIS240
+    setWindowTitle("Real-Time DAVIS Tracking");
+#else
     setWindowTitle("Real-Time DVS Tracking");
+#endif
     setGeometry(QRect(0,0,parameters_.output_size_x+10+dock_->geometry().width()+220,(parameters_.output_size_y+10)+90));
     setWindowIcon(QIcon(":vlo_logo.png"));
 }

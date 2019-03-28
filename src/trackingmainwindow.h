@@ -35,8 +35,11 @@
 #include "event.h"
 #include "iu/iugui.h"
 #include "trackingworker.h"
+#ifdef DAVIS240
+#include "daviscameraworker.h"
+#else
 #include "dvscameraworker.h"
-
+#endif
 
 class TrackingMainWindow : public QMainWindow
 {
@@ -61,7 +64,11 @@ class TrackingMainWindow : public QMainWindow
     iu::Qt5ImageGpuWidget *output_win_;
     std::vector<Event> events_;
     TrackingWorker *tracking_worker_;
+#ifdef DAVIS240
+    DAVISCameraWorker *camera_worker_;
+#else
     DVSCameraWorker *camera_worker_;
+#endif
     Parameters parameters_;
 
     QMdiArea *mdi_area_;

@@ -6,6 +6,7 @@ SET(CMAKE_MODULE_PATH ${OT_CMAKE_MODULE_PATH})
 
 set(CMAKE_BUILD_TYPE Release)
 
+OPTION(WITH_DAVIS "Build with support for DAVIS240 instead of DVS128" ON)
 
 ##-----------------------------------------------------------------------------
 # ImageUtilities
@@ -33,6 +34,9 @@ if(WIN32)
   SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT.lib /MDd")
 endif(WIN32)
 add_definitions("-std=c++11 -fpermissive -O3 -DPARALLEL -ffast-math")
+if(WITH_DAVIS)
+  add_definitions("-DDAVIS240")
+endif(WITH_DAVIS)
 
 SET(CUDA_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/common.cu
@@ -53,17 +57,27 @@ else(WIN32)
   cuda_add_library(dvs-tracking-common STATIC ${CUDA_FILES})
   target_link_libraries(dvs-tracking-common ${IMAGEUTILITIES_LIBRARIES})
 endif(WIN32)
-target_link_libraries(dvs-tracking-common ${OpenCV_LIBRARIES} ${OpenCV_LIBS} cnpy)
+target_link_libraries(dvs-tracking-common ${OpenCV_LIBRARIES} ${OpenCV_LIBS})
 
 SET ( GUI_FILES
   ${CMAKE_CURRENT_SOURCE_DIR}/live_tracking_gui.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/trackingmainwindow.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/dvscameraworker.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/trackingworker.cpp)
+if( WITH_DAVIS )
+	SET( GUI_FILES
+	${GUI_FILES}
+	${CMAKE_CURRENT_SOURCE_DIR}/daviscameraworker.cpp)
+else( WITH_DAVIS )
+	SET( GUI_FILES 
+	${GUI_FILES}
+	${CMAKE_CURRENT_SOURCE_DIR}/dvscameraworker.cpp)
+endif( WITH_DAVIS )
 
-link_directories(/usr/local/lib/x86_64-linux-gnu/) # libcaer
-link_directories(/usr/local/lib64/)
+
+#link_directories(/usr/local/lib/x86_64-linux-gnu/) # libcaer
+#link_directories(/usr/local/lib64/)
+link_directories(/usr/local/lib/)
 CUDA_ADD_EXECUTABLE(live_tracking_gui ${GUI_FILES} ${HEADER_FILES} ${UI_RESOURCES})
-TARGET_LINK_LIBRARIES(live_tracking_gui dvs-tracking-common X11 Qt5::Widgets Qt5::OpenGL caer)
+TARGET_LINK_LIBRARIES(live_tracking_gui dvs-tracking-common X11 Qt5::Widgets Qt5::OpenGL caer cnpy)
 
 
