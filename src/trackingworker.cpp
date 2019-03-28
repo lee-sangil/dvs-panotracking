@@ -115,6 +115,7 @@ void TrackingWorker::run()
             }
             mutex_events_.unlock();
             track(temp_events);
+			std::cout << "Roll-Pitch-Yaw [rad]: [" << pose_[0] << ", " << pose_[1] << ", " << pose_[2] << "]" << std::endl;
         } else
             msleep(1);
     }
